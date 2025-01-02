@@ -19,18 +19,29 @@ class RegressionTrain(torch.nn.Module):
         # initialize the module using super() constructor
         super(RegressionTrain, self).__init__()
         # assign the architectures
+        # 在我们的版本中model不被定义为属性而是在主程序中手动调用
         self.model = model
         # assign the weights for each task
+        # weights: 一个 torch.nn.Parameter 对象，用于表示每个任务的权重。
+        # model.n_tasks 指定了任务的数量，初始化为每个任务的权重为1。
+        # weights函数就是一个针对每个任务的权重向量 torch.ones(model.n_tasks)表示生成一个长度为n_tasks的全为1的向量 就是初始向量
         self.weights = torch.nn.Parameter(torch.ones(model.n_tasks).float())
+        
         # loss function
         self.mse_loss = MSELoss()
 
     
     def forward(self, x, ts):
+        # x: 输入数据，形状为 [B, D]，其中 B 是批次大小，D 是输入特征维度。
+        # ts: 目标数据，形状为 [B, n_tasks, D']，每个任务对应一个目标值 也就是真实标签，用于和预测标签对比计算真实值
+
+        
         B, n_tasks = ts.shape[:2]
-        ys = self.model(x)
+        ys = self.model(x)   # ys是预测结果
         
         # check if the number of tasks is equal to this size
+        # assert 是 Python 的一个内置关键字，用于检查条件是否为真。
+        # 如果条件为 True，assert 不做任何操作；如果条件为 False，则抛出 AssertionError 异常。
         assert(ys.size()[1] == n_tasks)
         task_loss = []
         for i in range(n_tasks):
