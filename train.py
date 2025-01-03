@@ -82,6 +82,7 @@ def train_toy_example(args):
 
             # set the gradients of w_i(t) to zero because these gradients have to be updated using the GradNorm loss
             #print('Before turning to 0: {}'.format(model.weights.grad))
+            # model就是regressiontrain 的实例 。weights属性返回gradnorm的参数
             model.weights.grad.data = model.weights.grad.data * 0.0
             #print('Turning to 0: {}'.format(model.weights.grad))
 
